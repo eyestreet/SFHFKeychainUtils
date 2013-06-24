@@ -246,6 +246,8 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 	OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef) attributeQuery, &attrResult);
 	//NSDictionary *attributeResult = (__bridge_transfer NSDictionary *)attrResult;
     
+    CFRelease(attrResult) ; // need this if above bridging line is commented out
+
 	if (status != noErr) {
 		// No existing item found--simply return nil for the password
 		if (error != nil && status != errSecItemNotFound) {
@@ -375,7 +377,7 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 			
 			NSDictionary *query = [[NSDictionary alloc] initWithObjects: objects forKeys: keys];			
 			
-			status = SecItemUpdate((__bridge_retained CFDictionaryRef) query, (__bridge_retained CFDictionaryRef) [NSDictionary dictionaryWithObject: [password dataUsingEncoding: NSUTF8StringEncoding] forKey: (__bridge_transfer NSString *) kSecValueData]);
+			status = SecItemUpdate((__bridge CFDictionaryRef) query, (__bridge CFDictionaryRef) [NSDictionary dictionaryWithObject: [password dataUsingEncoding: NSUTF8StringEncoding] forKey: (__bridge_transfer NSString *) kSecValueData]);
 		}
 	}
 	else 
@@ -399,7 +401,7 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 		
 		NSDictionary *query = [[NSDictionary alloc] initWithObjects: objects forKeys: keys];			
         
-		status = SecItemAdd((__bridge_retained CFDictionaryRef) query, NULL);
+		status = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
 	}
 	
 	if (error != nil && status != noErr) 
